@@ -2,10 +2,25 @@ import men from '@/assets/men.png'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { featuredItems, programs } from '@/constants'
+import { auth } from '@/firebase'
+import { useUserState } from '@/stores/user.store'
+import { LogOut } from 'lucide-react'
+import { CgGym } from 'react-icons/cg'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Home = () => {
+	const {user, setUser} = useUserState();
+
+	const navigate = useNavigate();
+
+	const onLogout = () => {
+        auth.signOut().then(()=>{
+            setUser(null);
+            navigate('/auth')
+        })
+    }
+
 	return (
 		<>
 			<div className='w-full h-screen flex items-center'>
@@ -15,11 +30,32 @@ const Home = () => {
 						A huge selection of health and fitness content, healthy recipes and
 						transformation stories to help you get fit and stay fit!
 					</p>
-					<Link to={ '/auth' }>
-						<Button className='w-fit mt-6 font-bold h-12' size={'lg'}>
-							Join club now
-						</Button>
-					</Link>
+					{
+						user ? (
+							<div className='flex gap-4'>
+								<Link to={ '/dashboard' }>
+									<Button className='w-fit mt-6 font-bold h-12' size={'lg'}>
+										<span>Go to Gym</span>
+										<CgGym className='h-5 w-5 ml-2'/>
+									</Button>
+								</Link>
+								<Link to={ '/dashboard' }>
+									<Button className='w-fit mt-6 font-bold h-12' size={'lg'} variant={'destructive'} onClick={onLogout}>
+										<span>Logout</span>
+										<LogOut className='h-5 w-5 ml-2'/>
+									</Button>
+								</Link>
+							</div>
+						) :
+						(
+							<Link to={ '/auth' }>
+								<Button className='w-fit mt-6 font-bold h-12' size={'lg'}>
+									Join club now
+								</Button>
+							</Link>
+						)
+					}
+					
 					
 
 					<div className='mt-24'>
