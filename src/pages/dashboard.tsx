@@ -2,22 +2,47 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { BadgePlus } from 'lucide-react'
 import TaskItem  from '@/components/shared/task-item';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import TaskForm from '@/components/forms/task-form'
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '@/firebase'
+import { TaskScheme } from '@/lib/validation'
+import { z } from 'zod'
+import { useUserState } from '@/stores/user.store'
+import { useState } from 'react'
 
 const Dashboard = () => {
+    const {user} = useUserState();
+	const [open, setOpen] = useState(false)
+
+	const onAdd = async ({title}: z.infer<typeof TaskScheme>) => {
+		return addDoc(collection(db,'tasks'), {
+            title,
+            status:'unstarted',	
+            startTime: null,
+            endTime: null,
+            userId: user?.uid
+        }).then(() => setOpen(false))
+	}
+
 	return (
+		<>
 		<div className='h-screen max-w-6xl mx-auto flex items-center'>
 			<div className='grid grid-cols-2 w-full gap-8 items-center'>
 				<div className='flex flex-col space-y-3'>
 					<div className='w-full p-4 rounded-md flex justify-between bg-gradient-to-t from-background to-secondary'>
 						<div className='text-2xl font-bold'>Trainings</div>
-						<Button size={'icon'}>
+						<Button size={'icon'} onClick={ () => setOpen(true) }>
 							<BadgePlus />
 						</Button>
+						
+
+						
 					</div>
 					<Separator />
 					<div className='w-full p-4 rounded-md flex justify-between bg-gradient-to-b from-background to-secondary relative min-h-60'>
 						<div className='flex flex-col space-y-3 w-full'>
-							{Array.from({ length: 3 }).map((_, idx) => (
+							{Array.from({ length: 3 }).map((_) => (
 								<TaskItem />
 							))}
 						</div>
@@ -40,6 +65,19 @@ const Dashboard = () => {
 				</div>
 			</div>
 		</div>
+
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Create a new task</DialogTitle>
+				</DialogHeader>
+				<Separator />
+				<TaskForm handler={onAdd}/>
+			</DialogContent>
+		</Dialog>
+		</>
 	)
 }
 

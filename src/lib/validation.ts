@@ -1,3 +1,4 @@
+import { title } from 'process'
 import { z } from 'zod';
 
 export const LoginScheme = z.object({
@@ -12,4 +13,8 @@ export const RegisterScheme = z.object({
 }).refine(data => data.password === data.confirmPassword, {
     message:'Password do not match',
     path: ['confirmPassword']
+})
+
+export const TaskScheme = z.object({
+   title:z.string().min(5)
 })

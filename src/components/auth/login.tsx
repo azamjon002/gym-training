@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { useState } from 'react'
 import { RiAlertLine } from 'react-icons/ri'
 import FillLoading from '../shared/fill-loading'
+import { useUserState } from '@/stores/user.store'
 const Login = () => {
   const [ isLoading, setIsLoading ] = useState(false);
   const [ error, setError ] = useState('');
@@ -21,6 +22,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const {setAuth} = useAuthState();
+
+  const { setUser } = useUserState();
 
   const form = useForm<z.infer<typeof LoginScheme>>({
     resolver: zodResolver(LoginScheme),
@@ -36,7 +39,8 @@ const Login = () => {
     setIsLoading(true)
 
     try{
-      await signInWithEmailAndPassword(auth, email, password)
+      const res = await signInWithEmailAndPassword(auth, email, password)
+      setUser(res.user)
       navigate('/')
 
     }catch(error){
