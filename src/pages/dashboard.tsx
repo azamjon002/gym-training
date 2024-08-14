@@ -17,6 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { RiAlertLine } from 'react-icons/ri'
 import { ITask } from '@/types';
 import { toast } from 'sonner'
+import { addMilliseconds, addMinutes, format } from 'date-fns'
 
 const Dashboard = () => {
 	const [isDeleting, setIsDeleting] = useState(false)
@@ -79,10 +80,17 @@ const Dashboard = () => {
 		})
 	}
 
+	const formatDate = (time: number) =>{
+		const date = addMilliseconds(new Date(0), time)
+		const formattedDate = format(addMinutes(date, date.getTimezoneOffset()), 'HH:mm:ss')
+		return formattedDate;
+	
+	}
+
 	return (
 		<>
-		<div className='h-screen max-w-6xl mx-auto flex items-center'>
-			<div className='grid grid-cols-2 w-full gap-8 items-center'>
+		<div className='h-screen max-w-6xl mx-auto flex items-center max-md:px-6 max-md:pt-[8vh]'>
+			<div className='grid lg:grid-cols-2 grid-cols-1 w-full gap-8 items-center'>
 				<div className='flex flex-col space-y-3'>
 					<div className='w-full p-4 rounded-md flex justify-between bg-gradient-to-t from-background to-secondary'>
 						<div className='text-2xl font-bold'>Trainings</div>
@@ -142,15 +150,35 @@ const Dashboard = () => {
 				<div className='flex flex-col space-y-3 w-full'>
 					<div className='p-4 rounded-md bg-gradient-to-r from-blue-900 to-background relative h-24'>
 						<div className='text-2xl font-bold'>Total week</div>
-						<div className='text-3xl font-bold'>02:08:47</div>
+						{
+							isPending ? (
+								<FillLoading />
+							) : data && (
+								<div className='text-3xl font-bold'>{ formatDate(data.weekTotal) }</div>
+							)
+						}
 					</div>
+
+					
 					<div className='p-4 rounded-md bg-gradient-to-r from-secondary to-background relative h-24'>
-						<div className='text-2xl font-bold'>Total week</div>
-						<div className='text-3xl font-bold'>02:08:47</div>
+						<div className='text-2xl font-bold'>Total month</div>
+						{
+							isPending ? (
+								<FillLoading />
+							) : data && (
+								<div className='text-3xl font-bold'>{ formatDate(data.monthTotal) }</div>
+							)
+						}
 					</div>
 					<div className='p-4 rounded-md bg-gradient-to-r from-destructive to-background relative h-24'>
-						<div className='text-2xl font-bold'>Total week</div>
-						<div className='text-3xl font-bold'>02:08:47</div>
+						<div className='text-2xl font-bold'>Total time</div>
+						{
+							isPending ? (
+								<FillLoading />
+							) : data && (
+								<div className='text-3xl font-bold'>{ formatDate(data.total) }</div>
+							)
+						}
 					</div>
 				</div>
 			</div>

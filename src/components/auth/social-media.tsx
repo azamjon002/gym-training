@@ -39,7 +39,7 @@ const Social = () => {
     <>
       {isLoading && <FillLoading/>}
       <Separator className='my-3'/>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid sm:grid-cols-2 grid-cols-1 gap-2'>
         <Button className='h-12' variant={'secondary'} disabled={isLoading} onClick={onGitHub}>
           <FaGithub className='mr-2'/>
           <span>Sign in with Guthub</span>
